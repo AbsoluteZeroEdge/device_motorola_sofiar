@@ -3,6 +3,6 @@ PRODUCT_MAKEFILES := \
     $(LOCAL_DIR)/_sofiar.mk
 
 COMMON_LUNCH_CHOICES := \
-    _sofiar-user \
-    _sofiar-userdebug \
-    _sofiar-eng \
+    spark_sofiar-user \
+    spark_sofiar-userdebug \
+    spark_sofiar-eng \
