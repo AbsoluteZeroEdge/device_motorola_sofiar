@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2015 The CyanogenMod Project
  * Copyright (c) 2017 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,69 +22,72 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.util.Log;
 
+import java.lang.System;
+
 import org.lineageos.settings.device.LineageActionsSettings;
 import org.lineageos.settings.device.SensorAction;
 import org.lineageos.settings.device.SensorHelper;
 
-public class GlanceSensor implements ScreenStateNotifier {
-    private static final String TAG = "LineageActions-GlanceSensor";
+public class TapSensor implements ScreenStateNotifier, SensorEventListener {
+    private static final String TAG = "LineageActions-TapSensor";
 
     private final LineageActionsSettings mLineageActionsSettings;
     private final SensorHelper mSensorHelper;
     private final SensorAction mSensorAction;
-    
     private final Sensor mSensor;
-    private final Sensor mApproachSensor;
+    private final Sensor mProx;
 
-    private boolean mEnabled;
+    private boolean mIsEnabled;
+    private boolean mProxIsCovered;
 
-    public GlanceSensor(LineageActionsSettings lineageActionsSettings, SensorHelper sensorHelper,
+    public TapSensor(LineageActionsSettings motoActionsSettings, SensorHelper sensorHelper,
                 SensorAction action) {
-        mLineageActionsSettings = lineageActionsSettings;
+        mLineageActionsSettings = motoActionsSettings;
         mSensorHelper = sensorHelper;
         mSensorAction = action;
 
-        mSensor = sensorHelper.getGlanceSensor();
-        mApproachSensor = sensorHelper.getApproachGlanceSensor();
+        mSensor = sensorHelper.getTapSensor();
+        mProx = sensorHelper.getProximitySensor();
     }
 
     @Override
     public void screenTurnedOn() {
-        if (mEnabled) {
+        if (mIsEnabled) {
             Log.d(TAG, "Disabling");
-            mSensorHelper.unregisterListener(mGlanceListener);
-            mSensorHelper.unregisterListener(mApproachGlanceListener);
-            mEnabled = false;
+            mSensorHelper.unregisterListener(this);
+            mSensorHelper.unregisterListener(mProxListener);
+            mIsEnabled = false;
         }
     }
 
     @Override
     public void screenTurnedOff() {
-        if (mLineageActionsSettings.isPickUpEnabled() && !mEnabled) {
+        if (mLineageActionsSettings.isTapToWakeEnabled() && !mIsEnabled) {
             Log.d(TAG, "Enabling");
-            mSensorHelper.registerListener(mSensor, mGlanceListener);
-            mSensorHelper.registerListener(mSensor, mApproachGlanceListener);
-            mEnabled = true;
+            mSensorHelper.registerListener(mSensor, this);
+            mSensorHelper.registerListener(mProx, mProxListener);
+            mIsEnabled = true;
         }
     }
 
-    private SensorEventListener mGlanceListener = new SensorEventListener() {
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        Log.d(TAG, "tap sensor triggered");
+        if (mProxIsCovered) {
+            Log.d(TAG, "proximity sensor covered, ignoring tap");
+            return;
+        }
+        mSensorAction.action();
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    }
+
+    private SensorEventListener mProxListener = new SensorEventListener() {
         @Override
         public synchronized void onSensorChanged(SensorEvent event) {
-            Log.d(TAG, "Changed");
-            mSensorAction.action();
-        }
-
-        @Override
-        public void onAccuracyChanged(Sensor mSensor, int accuracy) {
-        }
-    };
-
-    private SensorEventListener mApproachGlanceListener = new SensorEventListener() {
-        @Override
-        public synchronized void onSensorChanged(SensorEvent event) {
-            Log.d(TAG, "Approach: Changed");
-            mSensorAction.action();
+            mProxIsCovered = event.values[0] < mProx.getMaximumRange();
         }
 
         @Override

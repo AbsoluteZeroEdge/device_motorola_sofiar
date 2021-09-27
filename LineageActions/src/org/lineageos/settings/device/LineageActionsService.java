@@ -35,12 +35,11 @@ import org.lineageos.settings.device.actions.LiftToSilence;
 import org.lineageos.settings.device.actions.ProximitySilencer;
 
 import org.lineageos.settings.device.doze.DozePulseAction;
-import org.lineageos.settings.device.doze.GlanceSensor;
 import org.lineageos.settings.device.doze.ProximitySensor;
-import org.lineageos.settings.device.doze.FlatUpSensor;
 import org.lineageos.settings.device.doze.ScreenReceiver;
 import org.lineageos.settings.device.doze.ScreenStateNotifier;
 import org.lineageos.settings.device.doze.StowSensor;
+import org.lineageos.settings.device.doze.TapSensor;
 
 public class LineageActionsService extends IntentService implements ScreenStateNotifier,
         UpdatedStateNotifier {
@@ -59,12 +58,12 @@ public class LineageActionsService extends IntentService implements ScreenStateN
                         new LinkedList<UpdatedStateNotifier>();
 
     public LineageActionsService(Context context) {
-        super("LineageActionService");
+        super("MotoActionService");
         mContext = context;
 
         Log.d(TAG, "Starting");
 
-        LineageActionsSettings lineageActionsSettings = new LineageActionsSettings(context, this);
+        LineageActionsSettings motoActionsSettings = new LineageActionsSettings(context, this);
         mSensorHelper = new SensorHelper(context);
         mScreenReceiver = new ScreenReceiver(context, this);
 
@@ -72,17 +71,16 @@ public class LineageActionsService extends IntentService implements ScreenStateN
         mScreenStateNotifiers.add(mDozePulseAction);
 
         // Actionable sensors get screen on/off notifications
-        mScreenStateNotifiers.add(new GlanceSensor(lineageActionsSettings, mSensorHelper, mDozePulseAction));
-        mScreenStateNotifiers.add(new ProximitySensor(lineageActionsSettings, mSensorHelper, mDozePulseAction));
-        mScreenStateNotifiers.add(new StowSensor(lineageActionsSettings, mSensorHelper, mDozePulseAction));
-        mScreenStateNotifiers.add(new FlatUpSensor(lineageActionsSettings, mSensorHelper, mDozePulseAction));
+        mScreenStateNotifiers.add(new TapSensor(motoActionsSettings, mSensorHelper, mDozePulseAction));
+        mScreenStateNotifiers.add(new ProximitySensor(motoActionsSettings, mSensorHelper, mDozePulseAction));
+        mScreenStateNotifiers.add(new StowSensor(motoActionsSettings, mSensorHelper, mDozePulseAction));
 
         // Other actions that are always enabled
-        mUpdatedStateNotifiers.add(new CameraActivationSensor(lineageActionsSettings, mSensorHelper));
-        mUpdatedStateNotifiers.add(new ChopChopSensor(lineageActionsSettings, mSensorHelper));
-        mUpdatedStateNotifiers.add(new ProximitySilencer(lineageActionsSettings, context, mSensorHelper));
-        mUpdatedStateNotifiers.add(new FlipToMute(lineageActionsSettings, context, mSensorHelper));
-        mUpdatedStateNotifiers.add(new LiftToSilence(lineageActionsSettings, context, mSensorHelper));
+        mUpdatedStateNotifiers.add(new CameraActivationSensor(motoActionsSettings, mSensorHelper));
+        mUpdatedStateNotifiers.add(new ChopChopSensor(motoActionsSettings, mSensorHelper));
+        mUpdatedStateNotifiers.add(new ProximitySilencer(motoActionsSettings, context, mSensorHelper));
+        mUpdatedStateNotifiers.add(new FlipToMute(motoActionsSettings, context, mSensorHelper));
+        mUpdatedStateNotifiers.add(new LiftToSilence(motoActionsSettings, context, mSensorHelper));
 
         mPowerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         mWakeLock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "LineageActionsWakeLock");

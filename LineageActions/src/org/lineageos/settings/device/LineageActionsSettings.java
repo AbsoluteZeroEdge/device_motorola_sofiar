@@ -17,12 +17,15 @@
 
 package org.lineageos.settings.device;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.hardware.display.AmbientDisplayConfiguration;
-import android.os.UserHandle;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 
+import android.util.Log;
+
+import org.lineageos.settings.device.actions.Constants;
 import org.lineageos.settings.device.actions.UpdatedStateNotifier;
 import org.lineageos.settings.device.actions.CameraActivationAction;
 import org.lineageos.settings.device.actions.TorchAction;
@@ -37,6 +40,7 @@ public class LineageActionsSettings {
     private static final String GESTURE_IR_SILENCER_KEY = "gesture_ir_silencer";
     private static final String GESTURE_FLIP_TO_MUTE_KEY = "gesture_flip_to_mute";
     private static final String GESTURE_LIFT_TO_SILENCE_KEY = "gesture_lift_to_silence";
+    private static final String GESTURE_TAP_KEY = "gesture_tap";
 
     private final Context mContext;
     private final UpdatedStateNotifier mUpdatedStateNotifier;
@@ -48,6 +52,7 @@ public class LineageActionsSettings {
     private boolean mIrSilencerEnabled;
     private boolean mFlipToMuteEnabled;
     private boolean mLiftToSilenceEnabled;
+    private boolean mTapGestureEnabled;
 
     public LineageActionsSettings(Context context, UpdatedStateNotifier updatedStateNotifier) {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -65,28 +70,20 @@ public class LineageActionsSettings {
         return mChopChopEnabled;
     }
 
-    public static boolean isAODEnabled(Context context) {
-        return new AmbientDisplayConfiguration(context).alwaysOnEnabled(UserHandle.USER_CURRENT);
-    }
-
-    public static boolean isDozeEnabled(Context context) {
-        return new AmbientDisplayConfiguration(context).pulseOnNotificationEnabled(UserHandle.USER_CURRENT);
-    }
-
-    public boolean isAODEnabled() {
-        return isAODEnabled(mContext);
+    public static boolean isDozeEnabled(ContentResolver contentResolver) {
+        return (Settings.Secure.getInt(contentResolver, Settings.Secure.DOZE_ENABLED, 1) != 0);
     }
 
     public boolean isDozeEnabled() {
-        return isDozeEnabled(mContext);
+        return isDozeEnabled(mContext.getContentResolver());
     }
 
     public boolean isIrWakeupEnabled() {
-        return isDozeEnabled() && !isAODEnabled() && mIrWakeUpEnabled;
+        return isDozeEnabled() && mIrWakeUpEnabled;
     }
 
     public boolean isPickUpEnabled() {
-        return isDozeEnabled() && !isAODEnabled() && mPickUpGestureEnabled;
+        return isDozeEnabled() && mPickUpGestureEnabled;
     }
 
     public boolean isIrSilencerEnabled() {
@@ -109,6 +106,10 @@ public class LineageActionsSettings {
         new TorchAction(mContext).action();
     }
 
+    public boolean isTapToWakeEnabled() {
+        return isDozeEnabled() && mTapGestureEnabled;
+    }
+
     private void loadPreferences(SharedPreferences sharedPreferences) {
         mCameraGestureEnabled = sharedPreferences.getBoolean(GESTURE_CAMERA_ACTION_KEY, true);
         mChopChopEnabled = sharedPreferences.getBoolean(GESTURE_CHOP_CHOP_KEY, true);
@@ -117,6 +118,7 @@ public class LineageActionsSettings {
         mIrSilencerEnabled = sharedPreferences.getBoolean(GESTURE_IR_SILENCER_KEY, false);
         mFlipToMuteEnabled = sharedPreferences.getBoolean(GESTURE_FLIP_TO_MUTE_KEY, false);
         mLiftToSilenceEnabled = sharedPreferences.getBoolean(GESTURE_LIFT_TO_SILENCE_KEY, false);
+        mTapGestureEnabled = sharedPreferences.getBoolean(GESTURE_TAP_KEY, true);
     }
 
     private SharedPreferences.OnSharedPreferenceChangeListener mPrefListener =
@@ -139,6 +141,13 @@ public class LineageActionsSettings {
                 mFlipToMuteEnabled = sharedPreferences.getBoolean(GESTURE_FLIP_TO_MUTE_KEY, false);
             } else if (GESTURE_LIFT_TO_SILENCE_KEY.equals(key)) {
                 mLiftToSilenceEnabled = sharedPreferences.getBoolean(GESTURE_LIFT_TO_SILENCE_KEY, false);
+            } else if (GESTURE_TAP_KEY.equals(key)) {
+                mTapGestureEnabled = sharedPreferences.getBoolean(GESTURE_TAP_KEY, true);
+            } else if (Constants.FP_HOME_KEY.equals(key) || Constants.FP_HAPTIC_KEY.equals(key) || Constants.FP_HOME_KEY_OFF.equals(key) || Constants.FP_HAPTIC_SCREENOFF_KEY.equals(key) ||Constants.FP_PROXIMITY_CHECK_SCREENOFF_KEY.equals(key) || Constants.FP_KEYS.equals(key) || Constants.FP_KEY_DBLTAP.equals(key) || Constants.FP_KEY_HOLD.equals(key) ||  Constants.FP_KEY_LEFT.equals(key) || Constants.FP_KEY_RIGHT.equals(key)
+                || Constants.FP_KEYS_OFF.equals(key) || Constants.FP_KEY_DBLTAP_OFF.equals(key) || Constants.FP_KEY_HOLD_OFF.equals(key) ||  Constants.FP_KEY_LEFT_OFF.equals(key) || Constants.FP_KEY_RIGHT_OFF.equals(key)
+                || Constants.GESTURE_SWIPE_RIGHT.equals(key) || Constants.GESTURE_SWIPE_LEFT.equals(key) || Constants.GESTURE_SWIPE_DOWN.equals(key) || Constants.GESTURE_SWIPE_UP.equals(key)) {
+                Constants.writePreference(mContext, key);
+                updated = false;
             } else {
                 updated = false;
             }

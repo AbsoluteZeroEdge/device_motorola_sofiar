@@ -17,17 +17,19 @@
 package org.lineageos.settings.device;
 
 import android.os.Bundle;
+import androidx.preference.PreferenceFragment;
 
-import android.preference.PreferenceActivity;
-
-public class ActionsPreferenceActivity extends PreferenceActivity {
+public class GestureSettingsFragment extends PreferenceFragment {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (savedInstanceState == null){
-            getFragmentManager().beginTransaction()
-                    .replace(android.R.id.content, new ActionsPreferenceFragment()).commit();
-        }
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
     }
+
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        addPreferencesFromResource(R.xml.actions_panel);
+    }
+
 }
