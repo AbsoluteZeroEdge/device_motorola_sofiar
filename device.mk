@@ -221,15 +221,3 @@ PRODUCT_PACKAGES +=  \
     vendor.qti.hardware.bluetooth_dun-V1.0-java \
     libbtconfigstore \
     libbluetooth_qti
-    
-# Moto Camera 2
-PRODUCT_PACKAGES += \
-    MotCamera2
-    
-# Moto TimeWeather
-PRODUCT_PACKAGES += \
-    TimeWeather
-    
-# BootFix
-PRODUCT_PRODUCT_PROPERTIES += \
-    ro.control_privapp_permissions=log

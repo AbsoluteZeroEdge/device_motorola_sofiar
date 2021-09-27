@@ -1,8 +1,8 @@
 PRODUCT_MAKEFILES := \
     $(LOCAL_DIR)/device.mk \
-    $(LOCAL_DIR)/_sofiar.mk
+    $(LOCAL_DIR)/lineage_sofiar.mk
 
 COMMON_LUNCH_CHOICES := \
-    _sofiar-user \
-    _sofiar-userdebug \
-    _sofiar-eng \
+    lineage_sofiar-user \
+    lineage_sofiar-userdebug \
+    lineage_sofiar-eng \
