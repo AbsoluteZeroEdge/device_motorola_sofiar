@@ -1,6 +1,6 @@
 PRODUCT_MAKEFILES := \
     $(LOCAL_DIR)/device.mk \
-    $(LOCAL_DIR)/_sofiar.mk
+    $(LOCAL_DIR)/spark_sofiar.mk
 
 COMMON_LUNCH_CHOICES := \
     spark_sofiar-user \
