@@ -21,7 +21,7 @@
 
 PRODUCT_EXTRA_VNDK_VERSIONS := 29
 
-VENDOR_EXCEPTION_PATHS :=  \
+VENDOR_EXCEPTION_PATHS := spark \
     motorola \
     gapps \
     microg
@@ -32,7 +32,7 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_p.mk)
 
 # Inherit some common HavocOS stuff
-$(call inherit-product, vendor//config/common_full_phone.mk)
+$(call inherit-product, vendor/spark/config/common_full_phone.mk)
 
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 PRODUCT_BUILD_SUPER_PARTITION := false
@@ -66,7 +66,7 @@ $(call inherit-product, device/motorola/sofiar/device.mk)
 PRODUCT_SHIPPING_API_LEVEL := 29
 
 # Discard inherited values and use our own instead.
-PRODUCT_NAME := _sofiar
+PRODUCT_NAME := spark_sofiar
 PRODUCT_DEVICE := sofiar
 PRODUCT_BRAND := motorola
 PRODUCT_MANUFACTURER := motorola
