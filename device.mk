@@ -174,8 +174,13 @@ PRODUCT_PACKAGES += \
     RemovePackages
 
 PRODUCT_PACKAGES += \
-    MotoRav
-
+    MotoRav \
+    MotoRavT \
+    MotoSofia \
+    MotoSofiaP \
+    MotoSofiaPSprout \
+    MotoSofiaR
+    
 PRODUCT_BOOT_JARS += \
     android.hidl.manager-V1.0-java \
     QPerformance \
