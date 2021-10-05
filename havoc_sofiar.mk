@@ -101,4 +101,4 @@ PRODUCT_PRODUCT_PROPERTIES += \
 $(call inherit-product, vendor/motorola/sofiar/sofiar-vendor.mk)
 
 # Overlays
-DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay-lineage
+DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay-havoc
