@@ -38,6 +38,7 @@
                 android:targetClass="org.lineageos.settings.device.DozeSettingsActivity" />
     </Preference>
 
+<!--
     <Preference
         android:key="fp_gestures"
         android:title="@string/fingerprint_gestures_title"
@@ -47,10 +48,24 @@
                 android:targetPackage="org.lineageos.settings.device"
                 android:targetClass="org.lineageos.settings.device.FPGestureSettingsActivity" />
     </Preference>
+-->
+
+    <Preference
+        android:key="note"
+        android:title="@string/note_title"
+        android:summary="@string/moto_note_summary"
+        android:icon="@drawable/ic_settings_note">
+        android:persistent="false" >
+        <intent
+             android:targetPackage="com.motorola.stylus"
+             android:targetClass="com.motorola.stylus.manager.NoteManagerActivity" />
+    </Preference>
 
     <Preference
         android:key="stylus"
         android:title="@string/stylus_title"
+        android:summary="@string/stylus_settings_summary"
+        android:icon="@drawable/ic_settings_stylus">
         android:persistent="false" >
         <intent
              android:targetPackage="com.motorola.stylus"
