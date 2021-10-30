@@ -31,7 +31,7 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_p.mk)
 
-# Inherit some common HavocOS stuff
+# Inherit some common Havoc-OS stuff
 $(call inherit-product, vendor/havoc/config/common_full_phone.mk)
 
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
